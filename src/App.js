@@ -1,25 +1,19 @@
 // src/components/App.js
 import React, { useEffect, useState } from 'react';
-import useFeatureToggleAdapter from './services/featureToggleAdapter';
+
 import ConfigCatProvider from './services/ConfigCatProvider';
 import GrowthBookProvider from './services/GrowthBookProvider';
+import ConfigCat from './adapters/ConfigCat';
+import FeatureFlagAdapter from './adapters/FeatureFlagAdapter';
 
 const App = () => {
-  const { getFeatureStatus } = useFeatureToggleAdapter('my-feature');
-  const [isEnabled, setIsEnabled] = useState(false);
+  const configCat = ConfigCat('my-feature');
+  const featureFlagAdapter = FeatureFlagAdapter(configCat);
 
-  useEffect(() => {
-    const fetchFeatureToggle = () => {
-      const enabled = getFeatureStatus();
-      setIsEnabled(enabled);
-    };
-
-    fetchFeatureToggle();
-  }, [getFeatureStatus]);
-
+  const isFeatureEnabled = featureFlagAdapter.getFeatureStatus('my-feature');
   return (
     <div>
-      {isEnabled ? (
+      {isFeatureEnabled ? (
         <p>Feature está habilitada!</p>
       ) : (
         <p>Feature está desabilitada!</p>
